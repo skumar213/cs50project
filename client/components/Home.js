@@ -1,69 +1,64 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 
-/**
- * COMPONENT
- */
-export const Home = props => {
-  const { username } = props;
+const totalFruitVeg = 20;
 
-  const [current, setCurrent] = useState(null)
-  const [result, setResult] = useState(null)
+export const Home = () => {
+  const username = useSelector(state => state.auth.username);
 
-  const ricksAndSticks = {
-    1: "rick1.jpeg",
-    2: "rick2.jpeg",
-    3: "rick3.jpeg",
-    4: "rick4.jpeg",
-    5: "stick1.webp",
-    6: "stick2.jpg",
-    7: "stick3.jpeg",
-    8: "stick4.jpeg",
-  };
+  const [current, setCurrent] = useState(null);
+  const [result, setResult] = useState(null);
 
-  const index = () => Math.floor(Math.random() * (9 - 1) + 1);
+  const fruitsAndVeg = [];
 
-  useEffect(() => {
-    setCurrent(ricksAndSticks[index()])
-  }, [])
-
-  const handleClick = (evt) => {
-    if (current.includes(evt.target.value)) {
-      setResult("Good Job!!")
-
-      setTimeout(() => {
-        setResult(null)
-        setCurrent(ricksAndSticks[index()])
-      }, 3000)
+  for (let i = 1; i <= totalFruitVeg; i++) {
+    if (i < 11) {
+      fruitsAndVeg.push(`fruit/fruit${i}.jpeg`);
     } else {
-      setResult("Try Again!!")
+      fruitsAndVeg.push(`vegetable/veg${i - 10}.jpeg`);
     }
   }
 
-  return (
-    <div>
-      <h2>Welcome, {username}</h2>
-      <h3>Rick or Stick!!</h3>
+  const index = () => Math.floor(Math.random() * (19 - 0) + 0);
 
-      <img src={current} />
-      <div>
-        <button value ='rick' onClick={handleClick}>Rick</button>
-        <button value ='stick' onClick={handleClick}>Stick</button>
+  useEffect(() => {
+    setCurrent(fruitsAndVeg[index()]);
+  }, []);
+
+  const handleClick = evt => {
+    if (current.includes(evt.target.value)) {
+      setResult("Good Job!!");
+
+      setTimeout(() => {
+        setResult(null);
+        setCurrent(fruitsAndVeg[index()]);
+      }, 2000);
+    } else if (result !== "Good Job!!") {
+      setResult("Try Again!!");
+    }
+  };
+
+  return (
+    <div className="game">
+      <div className="game">
+        <h2>Welcome, {username}</h2>
+        <h3>Fruit or Vegetable!!</h3>
       </div>
-      <div>
-        {result ? <div>{result}</div> : null}
+
+      <div className="game">
+        <img src={current} />
+        <div>
+          <button value="fruit" onClick={handleClick}>
+            Fruit
+          </button>
+          <button value="veg" onClick={handleClick}>
+            Vegetable
+          </button>
+        </div>
+        <div className="result">{result ? <div>{result}</div> : null}</div>
       </div>
     </div>
   );
 };
 
-/**
- * CONTAINER
- */
-const mapState = state => {
-  return {
-    username: state.auth.username,
-  };
-};
-
-export default connect(mapState)(Home);
+export default Home;

@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+import {useHistory} from 'react-router-dom'
 import { useSelector } from "react-redux";
 
 const totalFruitVeg = 20;
 
 export const Home = () => {
   const username = useSelector(state => state.auth.username);
+  const history = useHistory();
 
   const [current, setCurrent] = useState(null);
   const [result, setResult] = useState(null);
+  const [timerId, setTimerId] = useState(null)
 
   const fruitsAndVeg = [];
 
@@ -23,13 +26,19 @@ export const Home = () => {
 
   useEffect(() => {
     setCurrent(fruitsAndVeg[index()]);
+
+    return () => {
+      clearTimeout(timerId)
+    }
   }, []);
 
   const handleClick = evt => {
-    if (current.includes(evt.target.value)) {
+    if (current.includes(evt.target.value) && result !== "Good Job!!") {
       setResult("Good Job!!");
 
-      setTimeout(() => {
+      const currentId = setTimeout(() => {
+        setTimerId(currentId);
+
         setResult(null);
         setCurrent(fruitsAndVeg[index()]);
       }, 2000);
